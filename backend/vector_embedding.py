@@ -5,10 +5,10 @@ from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 import requests
 from bs4 import BeautifulSoup
-from links import links
+from link import links
 
 
-def create_vectorDB(directory,links):
+def create_vectorDB(directory):
     embeddings=GoogleGenerativeAIEmbeddings(model = "models/embedding-004")
     loader=PyPDFDirectoryLoader(directory) ## Data Ingestion
     docs=loader.load() ## Document Loading
