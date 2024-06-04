@@ -46,7 +46,6 @@ async def analysis(details:Details):
     
 @app.get("/analysis")
 async def get_analysis():
-    return product_assessment,product_consumption
-
+    return {"product_assessment": product_assessment, "product_consumption": product_consumption}
 
 

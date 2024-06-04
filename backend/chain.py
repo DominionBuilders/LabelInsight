@@ -21,19 +21,27 @@ def reality_query(title,ingredients,nutritional,additives):
     prompt=ChatPromptTemplate.from_template(
     """
     You are an AI assistant tasked with analyzing product information from various sources. Given the following data:
-
-    Product Name:{title}
-    Nutrients:{nutritional}
-    Ingredients:{ingredients}
-    Additives:{additives}
-
     Additional Context:
     <context>
     {context}
     <context>
 
-    Task:
-    Provide a detailed analysis of the product's reality, covering aspects such as:
+    Task:{input}
+    """
+    )
+
+
+    document_chain=create_stuff_documents_chain(llm,prompt)
+    retriever=vectors.as_retriever()
+    retrieval_chain=create_retrieval_chain(retriever,document_chain)
+
+    response=retrieval_chain.invoke({
+    'input':"""
+    Product Name:{title}
+    Nutrients:{nutritional}
+    Ingredients:{ingredients}
+    Additives:{additives}
+   Provide a detailed analysis of the product's reality, covering aspects such as:
     - Nutritional value
     - Potential health benefits or concerns
     - Ingredient quality and sourcing
@@ -41,22 +49,20 @@ def reality_query(title,ingredients,nutritional,additives):
     - Overall assessment based on the provided information
 
     """.format(title=title, nutritional=nutritional, ingredients=ingredients, additives=additives)
-    )
-
-
-    document_chain=create_stuff_documents_chain(llm,prompt)
-    retriever=vectors.as_retriever()
-    retrieval_chain=create_retrieval_chain(retriever,document_chain)
-    response=retrieval_chain.invoke()
+    })
+    
     global product_reality
     product_reality = response['answer']
     print(product_reality)
 
 
 def compare(title,reality):
-    prompt=ChatPromptTemplate.from_template(
+    prompt = ChatPromptTemplate.from_messages([("human","{text}")])
+    
+    chain = prompt | llm
+    response = chain.invoke({"text":
         """
-        Given the following information:
+        As a skilled analyst, you have been given the following information:
 
         Product Name: {title}
         Product Reality: {product_reality}
@@ -68,13 +74,10 @@ def compare(title,reality):
         do not align with the actual product information. Provide an objective assessment
         of the validity of the claims based on the available data.
 
-        """.format(title=title,product_reality=reality)
-    )
+        Remember, your analysis can reveal the truth behind the product and help consumers make informed decisions.
 
-    document_chain=create_stuff_documents_chain(llm,prompt)
-    retriever=vectors.as_retriever()
-    retrieval_chain=create_retrieval_chain(retriever,document_chain)
-    response=retrieval_chain.invoke()
+        """.format(title=title,product_reality=reality) })
+    
     global product_comparison
     product_comparison = response['answer']
     print(product_comparison)
@@ -84,7 +87,17 @@ def compare(title,reality):
 def consumption(title,ingredients,nutritional,additives,allergies,diseases):
     
     prompt = {
-        "assessment": """
+        "assessment":"{assessment}",
+        "consumption":"{consumption}"     
+        }
+
+    document_chain=create_stuff_documents_chain(llm,prompt)
+    retriever=vectors.as_retriever()
+    retrieval_chain=create_retrieval_chain(retriever,document_chain)
+
+    response=retrieval_chain.invoke({
+
+        "assessment":"""
             You are a health and nutrition expert analyzing the following product information:
 
             Product Name: {title}
@@ -99,7 +112,7 @@ def consumption(title,ingredients,nutritional,additives,allergies,diseases):
             specific allergies and health conditions.
         """.format(title=title, nutritional=nutritional, ingredients=ingredients, additives=additives,allergies=allergies,diseases=diseases),
 
-        "consumption": """
+        "consumption":"""
             You are a health and nutrition expert analyzing the following product information:
 
             Product Name: {title}
@@ -112,11 +125,8 @@ def consumption(title,ingredients,nutritional,additives,allergies,diseases):
             Provide guidance on the recommended daily or monthly consumption limits for this product, 
             taking into account its nutritional profile and the user's health status.
         """.format(title=title, nutritional=nutritional, ingredients=ingredients, additives=additives,allergies=allergies,diseases=diseases)
-    }
-    document_chain=create_stuff_documents_chain(llm,prompt)
-    retriever=vectors.as_retriever()
-    retrieval_chain=create_retrieval_chain(retriever,document_chain)
-    response=retrieval_chain.invoke()
+    })
+    
     global product_consumption
     global product_assessment
     product_consumption = response['consumption']
