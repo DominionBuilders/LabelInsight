@@ -1,11 +1,19 @@
 from pydantic import BaseModel
 
 
-class Ingredients(BaseModel):
-    names : list[str]
+class Info(BaseModel):
+    name : str
+    Ingredients: list[str]
+    Nutritional: list[str]
+    Additives: list[str]
 
-class Nutritional(BaseModel):
-    names : list[str]
+class Title(BaseModel):
+    name : str
 
-class Product_reality(BaseModel):
-    desc : str
+class Details(BaseModel):
+    name : str
+    Ingredients: list[str]
+    Nutritional: list[str]
+    Additives: list[str]
+    Allergies: list[str]
+    Diseases: list[str]
