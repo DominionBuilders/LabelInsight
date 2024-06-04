@@ -1,13 +1,15 @@
 import axios from 'axios';
 
-export default function api_call(EAN){
+function api_call(EAN){
     axios.get(`https://world.openfoodfacts.net/api/v2/product/${EAN}`)
     .then(
-        (data)=>{
-            console.log(data);
+        (response)=>{
+            console.log(response.data);
         }
     )
     .catch((error)=>{
         console.log(error);
     })
 }
+
+api_call(8906032016571);
