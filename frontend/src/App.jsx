@@ -1,7 +1,17 @@
+import React from 'react';
+import SearchBar from './SearchBar';
+import './App.css';
 
+const App = () => {
+  return (
+    <div className="App">
+      <h1>Dynamic Search Bar</h1>
+      <SearchBar />
+    </div>
+  );
+};
 
-export default function App() {
-  
-}
+export default App;
+
 
 
