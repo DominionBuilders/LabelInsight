@@ -1,23 +1,38 @@
-import { useState } from "react";
-import { useZxing } from "react-zxing";
+import React, { useRef, useEffect, useState } from 'react';
+import { BrowserMultiFormatReader } from '@zxing/library';
 
-const Barcode = () => {
-  const [result, setResult] = useState("");
-  const { ref } = useZxing({
-    onDecodeResult(result) {
-      setResult(result.getText());
-    },
-  });
+export default function Barcode() {
+  const videoRef = useRef(null);
+  const reader = useRef(new BrowserMultiFormatReader());
+  const [result, setResult] = useState("null"); 
+
+  useEffect(() => {
+    if (!videoRef.current) return;
+    reader.current.decodeFromConstraints(
+      {
+        audio: false,
+        video: {
+          facingMode: 'environment',
+        },
+      },
+      videoRef.current,
+      (result, error) => {
+        if (result) {
+          console.log(result);
+          setResult(result.text);
+        }
+        if (error) console.log(error);
+      }
+    );
+    return () => {
+      reader.current.reset();
+    };
+  }, [videoRef]);
 
   return (
     <>
-      <video ref={ref} />
-      <p>
-        <span>Last result:</span>
-        <span>{result}</span>
-      </p>
+      <video ref={videoRef} />
+      <p>{result}</p> 
     </>
   );
-};
-
-export default Barcode
+}
