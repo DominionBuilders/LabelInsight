@@ -1,4 +1,4 @@
-import { BrowserMultiFormatReader } from '@zxing/library';
+import { BrowserMultiFormatReader, DecodeHintType, BarcodeFormat } from '@zxing/library';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import './barcode.css';
 
@@ -9,7 +9,7 @@ const useZxing = ({
       facingMode: 'environment',
     },
   },
-  hints,
+  hints = new Map([[DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.EAN_13, BarcodeFormat.EAN_8]]]),
   timeBetweenDecodingAttempts = 300,
   onResult = () => {},
   onError = () => {},

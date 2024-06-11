@@ -2,6 +2,7 @@ import React from 'react';
 import SearchBar from "./components/SearchBar";
 import './App.css';
 import Barcode from './components/Barcode';
+import BarcodeScanner from './components/BarcodeScanner';
 
 const App = () => {
   return (
@@ -9,7 +10,8 @@ const App = () => {
       <h1>Dynamic Search Bar</h1>
       <SearchBar />
       <h1>Barcode Scanner</h1> 
-      <Barcode/>
+      {/* <Barcode/> */}
+      <BarcodeScanner/>
     </div>
   );
 };
