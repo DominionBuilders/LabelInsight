@@ -1,12 +1,15 @@
 import React from 'react';
-import SearchBar from './SearchBar';
+import SearchBar from "./components/SearchBar";
 import './App.css';
+import Barcode from './components/Barcode';
 
 const App = () => {
   return (
     <div className="App">
       <h1>Dynamic Search Bar</h1>
-      <SearchBar />
+      {/* <SearchBar /> */}
+      <h1>Barcode Scanner</h1> 
+      <Barcode/>
     </div>
   );
 };

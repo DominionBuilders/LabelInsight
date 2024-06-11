@@ -8,7 +8,7 @@ const SearchBar = () => {
   const [suggestions, setSuggestions] = useState([]);
 
   useEffect(() => {
-    axios.get('https://api.example.com/items') 
+    axios.get('https://api.example.com/items') // our monogodb data base will solve this 
       .then(response => {
         setData(response.data);
         setFilteredData(response.data);
