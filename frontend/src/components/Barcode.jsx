@@ -9,7 +9,6 @@ const useZxing = ({
       facingMode: 'environment',
     },
   },
-  hints = new Map([[DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.EAN_13, BarcodeFormat.EAN_8]]]),
   timeBetweenDecodingAttempts = 300,
   onResult = () => {},
   onError = () => {},
@@ -17,6 +16,13 @@ const useZxing = ({
   const ref = useRef(null);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+
+  const hints = useMemo(() => {
+    const hintsMap = new Map();
+    hintsMap.set(DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.EAN_13, BarcodeFormat.EAN_8, BarcodeFormat.UPC_EAN_EXTENSION, BarcodeFormat.UPC_A]);
+    hintsMap.set(DecodeHintType.TRY_HARDER, true);
+    return hintsMap;
+  }, []);
 
   const reader = useMemo(() => {
     const instance = new BrowserMultiFormatReader(hints);
