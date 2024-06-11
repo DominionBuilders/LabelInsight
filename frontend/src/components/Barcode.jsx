@@ -1,5 +1,6 @@
 import { BrowserMultiFormatReader } from '@zxing/library';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import './barcode.css';
 
 const useZxing = ({
   constraints = {
@@ -50,7 +51,7 @@ const Barcode = ({
   const { ref, result, error } = useZxing({ onResult, onError });
   return (
   <>
-    <video ref={ref} />
+    <video ref={ref} className="barcode-video" />
     {result && <p>Result: {result.text}</p>}
     {error && <p>Error: {error.message}</p>}
   </>
