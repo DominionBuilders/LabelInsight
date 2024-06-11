@@ -51,7 +51,7 @@ const Barcode = ({
   const { ref, result, error } = useZxing({ onResult, onError });
   return (
   <>
-    <video ref={ref} className="barcode-video" />
+    <video ref={ref} />
     {result && <p>Result: {result.text}</p>}
     {error && <p>Error: {error.message}</p>}
   </>

@@ -10,8 +10,7 @@ const App = () => {
       <h1>Dynamic Search Bar</h1>
       <SearchBar />
       <h1>Barcode Scanner</h1> 
-      {/* <Barcode/> */}
-      <BarcodeScanner/>
+      <Barcode/>
     </div>
   );
 };
