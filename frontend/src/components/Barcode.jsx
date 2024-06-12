@@ -1,67 +1,51 @@
-import { BrowserMultiFormatReader, DecodeHintType, BarcodeFormat } from '@zxing/library';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import './barcode.css';
+// file = Html5QrcodePlugin.jsx
+import { Html5QrcodeScanner } from 'html5-qrcode';
+import { useEffect } from 'react';
 
-const useZxing = ({
-  constraints = {
-    audio: false,
-    video: {
-      facingMode: 'environment',
-    },
-  },
-  timeBetweenDecodingAttempts = 300,
-  onResult = () => {},
-  onError = () => {},
-} = {}) => {
-  const ref = useRef(null);
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState(null);
+const qrcodeRegionId = "html5qr-code-full-region";
 
-  const hints = useMemo(() => {
-    const hintsMap = new Map();
-    hintsMap.set(DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.EAN_13, BarcodeFormat.EAN_8, BarcodeFormat.UPC_EAN_EXTENSION, BarcodeFormat.UPC_A]);
-    hintsMap.set(DecodeHintType.TRY_HARDER, true);
-    return hintsMap;
-  }, []);
-
-  const reader = useMemo(() => {
-    const instance = new BrowserMultiFormatReader(hints);
-    instance.timeBetweenDecodingAttempts = timeBetweenDecodingAttempts;
-    return instance;
-  }, [hints, timeBetweenDecodingAttempts]);
-
-  useEffect(() => {
-    if (!ref.current) return;
-    reader.decodeFromConstraints(constraints, ref.current, (result, err) => {
-      if (result) {
-        setResult(result);
-        onResult(result);
-      }
-      if (err) {
-        setError(err);
-        onError(err);
-      }
-    });
-    return () => {
-      reader.reset();
-    };
-  }, [ref, reader]);
-
-  return { ref, result, error };
+// Creates the configuration object for Html5QrcodeScanner.
+const createConfig = (props) => {
+    let config = {};
+    if (props.fps) {
+        config.fps = props.fps;
+    }
+    if (props.qrbox) {
+        config.qrbox = props.qrbox;
+    }
+    if (props.aspectRatio) {
+        config.aspectRatio = props.aspectRatio;
+    }
+    if (props.disableFlip !== undefined) {
+        config.disableFlip = props.disableFlip;
+    }
+    return config;
 };
 
-const Barcode = ({
-  onResult = () => {},
-  onError = () => {},
-}) => {
-  const { ref, result, error } = useZxing({ onResult, onError });
-  return (
-  <>
-    <video ref={ref} />
-    {result && <p>Result: {result.text}</p>}
-    {error && <p>Error: {error.message}</p>}
-  </>
-  );
+const Html5QrcodePlugin = (props) => {
+
+    useEffect(() => {
+        // when component mounts
+        const config = createConfig(props);
+        const verbose = props.verbose === true;
+        // Suceess callback is required.
+        if (!(props.qrCodeSuccessCallback)) {
+            throw "qrCodeSuccessCallback is required callback.";
+        }
+        const html5QrcodeScanner = new Html5QrcodeScanner(qrcodeRegionId, config, verbose);
+        html5QrcodeScanner.render(props.qrCodeSuccessCallback, props.qrCodeErrorCallback);
+
+        // cleanup function when component will unmount
+        return () => {
+            html5QrcodeScanner.clear().catch(error => {
+                console.error("Failed to clear html5QrcodeScanner. ", error);
+            });
+        };
+    }, []);
+
+    return (
+        <div id={qrcodeRegionId} />
+    );
 };
 
-export default Barcode;
+export default Html5QrcodePlugin;
