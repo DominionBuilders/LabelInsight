@@ -1,15 +1,20 @@
 import axios from 'axios';
+import { useContext } from 'react';
+import { ResponseContext } from '../context/ResponseContext';
 
-function api_call(EAN){
+export default function api_call(EAN){
+
+    const {SetResponse,Response} = useContext(ResponseContext)
+
     axios.get(`https://world.openfoodfacts.net/api/v2/product/${EAN}`)
     .then(
         (response)=>{
-            console.log(response.data);
+            SetResponse(response.data);
+            console.log(Response);
         }
     )
     .catch((error)=>{
-        console.log(error);
+        SetResponse(error);
+        console.log(Response);
     })
 }
-
-api_call(8906032016571);
