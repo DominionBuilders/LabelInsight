@@ -4,12 +4,13 @@ import Html5QrcodePlugin from '../components/Barcode';
 import api_call from '../API/openfood';
 import { ResponseContext } from '../context/ResponseContext';
 
-export default function HomePage(R){
-    const {Response} = useContext(ResponseContext)
-    const [Result,SetResult] = useState("null");
+export default function HomePage(){
+    const { Response, setResponse } = useContext(ResponseContext);
+    const [Result, SetResult] = useState("");
+
     const onNewScanResult = (decodedText, decodedResult) => {
         SetResult(decodedText);
-        api_call(Result);
+        api_call(decodedText, setResponse);
     };
 
     return (
@@ -18,10 +19,10 @@ export default function HomePage(R){
             <SearchBar />
             <h1>Barcode Scanner</h1> 
             <Html5QrcodePlugin
-            fps={10}
-            qrbox={250}
-            disableFlip={false}
-            qrCodeSuccessCallback={onNewScanResult}
+                fps={10}
+                qrbox={250}
+                disableFlip={false}
+                qrCodeSuccessCallback={onNewScanResult}
             />
             <p>{Result}</p>
             <p>{Response}</p>
